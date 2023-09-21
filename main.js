@@ -21,11 +21,11 @@ setTimeout(() => {
     setupWallet();
 }, 0)
 
-var chainId = '';
+var chainId = window.ethereum.networkVersion;
 var account = '';
 var intervalId = '';
 var streamState = 'stopped';
-var balance = 0;
+var balance = '';
 
 window.ethereum.on('chainChanged', handleChainChanged)
 window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -86,9 +86,10 @@ function handleMessage(message) {
 function handleWalletSetup() {
     document.getElementById('log').innerHTML += "<br />Wallet connected: " + account + " Chain: " + chainId;
     document.getElementById('stream-start').disabled = false;
-    loadERC20TokenBalance(account).then((balance) => {
+    loadERC20TokenBalance(account).then((newBalance) => {
+        balance = newBalance;
         console.log("Balance " + balance);
-        document.getElementById('tokenBalance').textContent = balance;
+        document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
         isStreamStarted(account).then((result) => {
             var flowRate = parseInt(result.flowrate,16);
             if (flowRate > 0) {
@@ -154,8 +155,11 @@ function startSimulation() {
             console.log("Balance depleted!");
         } else {
             console.log(`Balance: ${balance}`);
-
-            document.getElementById('tokenBalance').textContent -= ethers.utils.formatEther(weiValue);
+            var balanceWei = BigInt(balance);
+            const decreaseAmount = BigInt('10000');
+            balanceWei -= decreaseAmount;
+            balance = balanceWei.toString();
+            document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
         }
     }, 1000);
 }
