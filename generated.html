@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    <script type="module" src="main.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
         #status {
-            position: fixed;
-            top: 10px;
-            right: 10px;
             display: flex;
             align-items: center;
         }
@@ -16,7 +23,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%; /* Make it a circle */
-            margin-right: 5px;
+            margin-right: 20px; /* Adjusted margin */
             text-align: center;
             display: inline-block;
             vertical-align: middle;
@@ -28,17 +35,11 @@
         .not-connected {
             background-color: red;
         }
-        #ethereum-icon {
-            width: 24px;
-            height: 24px;
-            background-image: url('ethereum-icon.png'); /* Replace with your own Ethereum icon */
-            background-size: cover;
-        }
         #balance {
             font-size: 16px;
             margin-top: 10px;
         }
-        #start-button {
+        #stream-start {
             padding: 10px 20px;
             font-size: 16px;
             margin-top: 10px;
@@ -48,57 +49,30 @@
             cursor: pointer;
             border-radius: 10px; /* Rounded corners */
         }
+        #connection-text {
+            font-size: 16px;
+            margin-left: 5px; /* Adjusted margin */
+        }
+        #connect-button {
+            padding: 5px 10px;
+            font-size: 16px;
+            background-color: #007BFF; /* Blue color */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px; /* Rounded corners */
+        }
     </style>
+
 </head>
 <body>
 <div id="status">
-    <div class="status-box connected" id="connected-box"></div>
-    <div class="status-box not-connected" id="not-connected-box">i</div>
-    <div id="ethereum-icon"></div>
+    <div class="status-box connected" id="connected-box"></div><div id="connection-text">Connected</div>
+    <div class="status-box not-connected" id="not-connected-box"></div><button id="connect-button">Connect</button>
 </div>
-<div id="balance">Balance: <span id="formatted-balance">0 ETH</span></div>
-<button id="start-button">Start</button>
+<div id="balance">Token Balance: <div id="tokenBalance">0</div></div>
+<button id="stream-start">Start</button>
 
-<script>
-    // Simulate the connection state (change this based on your actual connection status)
-    let isConnected = true; // Change to false to simulate not connected
 
-    // Simulate the Ethereum balance (change this to your actual balance)
-    let ethereumBalance = 5.12345;
-
-    // Function to update the UI based on connection state
-    function updateConnectionStatus() {
-        const connectedBox = document.getElementById('connected-box');
-        const notConnectedBox = document.getElementById('not-connected-box');
-
-        if (isConnected) {
-            connectedBox.style.display = 'block';
-            notConnectedBox.style.display = 'none';
-        } else {
-            connectedBox.style.display = 'none';
-            notConnectedBox.style.display = 'block';
-        }
-    }
-
-    // Function to format and display the Ethereum balance
-    function displayEthereumBalance() {
-        const ethereumBalanceSpan = document.getElementById('formatted-balance');
-        ethereumBalanceSpan.textContent = `${ethereumBalance.toFixed(5)} ETH`;
-    }
-
-    // Function to handle the "Start" button click event
-    function startButtonClick() {
-        // Simulate some action when the "Start" button is clicked
-        alert('Start button clicked!');
-    }
-
-    // Initial setup
-    updateConnectionStatus();
-    displayEthereumBalance();
-
-    // Attach a click event listener to the "Start" button
-    const startButton = document.getElementById('start-button');
-    startButton.addEventListener('click', startButtonClick);
-</script>
 </body>
 </html>

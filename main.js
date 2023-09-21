@@ -7,8 +7,7 @@ if (!window.ethereum.isMetaMask) {
 }
 
 if (!window.ethereum.isConnected()) {
-    console.log("Reloading");
-    location.reload();
+
 }
 
 const BASE_GOERLI = '0x14a33';
@@ -32,6 +31,19 @@ window.ethereum.on('accountsChanged', handleAccountsChanged);
 window.ethereum.on('connect', handleConnected);
 window.ethereum.on('disconnect', handleDisconnect);
 window.ethereum.on('message', handleMessage);
+
+export function connect(){
+    console.log("Reloading");
+    location.reload();
+}
+
+export function isConnected() {
+    return window.ethereum.isConnected()
+}
+
+export function isSupported() {
+    return window.ethereum.isMetaMask;
+}
 
 function handleChainChanged(newChainId) {
     console.log("Chain changed to " + newChainId);
@@ -84,7 +96,7 @@ function handleMessage(message) {
 
 
 function handleWalletSetup() {
-    document.getElementById('log').innerHTML += "<br />Wallet connected: " + account + " Chain: " + chainId;
+    console.log("Wallet connected: " + account + " Chain: " + chainId);
     document.getElementById('stream-start').disabled = false;
     loadBalance(account).then((newBalance) => {
         balance = newBalance;
@@ -93,8 +105,7 @@ function handleWalletSetup() {
             var flowRate = parseInt(result.flowrate,16);
             if (flowRate > 0) {
                 var button = document.getElementById('stream-start');
-                var log = document.getElementById('log')
-                log.innerHTML += "<br />Stream already started.";
+                console.log("Stream already started.");
                 button.textContent = "Stop stream";
                 streamState = 'started';
                 startSimulation();
@@ -115,13 +126,12 @@ function setupWallet() {
 export function switchStream() {
     console.log("Switching on/off stream...");
     var button = document.getElementById('stream-start');
-    var log = document.getElementById('log');
     button.disabled = true;
     if (streamState === 'stopped') {
-        log.innerHTML += "<br />Starting stream...";
+        console.log("Starting stream...");
         startStream(account).then((tx) => {
             console.log(tx);
-            log.innerHTML += "<br />Stream started.";
+            console.log("Stream started.");
             button.textContent = "Stop stream";
             streamState = 'started';
             startSimulation();
@@ -131,10 +141,10 @@ export function switchStream() {
             button.disabled = false;
         })
     } else if (streamState === 'started') {
-        log.innerHTML += "<br />Stopping stream...";
+        console.log("Stopping stream...");
         stopStream(account).then((tx) => {
             console.log(tx);
-            log.innerHTML += "<br />Stream stopped.";
+            console.log("Stream stopped.");
             button.textContent = "Start stream";
             streamState = 'stopped';
             clearInterval(intervalId);
@@ -166,5 +176,36 @@ function startSimulation() {
         }
     }, 1000);
 }
+
+function updateConnectionStatus() {
+    const connectedBox = document.getElementById('connected-box');
+    const notConnectedBox = document.getElementById('not-connected-box');
+    const connectionText = document.getElementById('connection-text');
+    const connectButton = document.getElementById('connect-button');
+
+    if (isConnected()) {
+        connectedBox.style.display = 'block';
+        notConnectedBox.style.display = 'none';
+        connectionText.textContent = 'Connected';
+        connectButton.style.display = 'none';
+    } else {
+        connectedBox.style.display = 'none';
+        notConnectedBox.style.display = 'block';
+        connectionText.textContent = ''; // Clear any previous text
+        connectButton.style.display = 'inline-block';
+    }
+}
+
+// Function to handle the "Connect" button click event
+function connectButtonClick() {
+    connect();
+}
+
+// Initial setup
+updateConnectionStatus();
+
+// Attach a click event listener to the "Connect" button
+const connectButton = document.getElementById('connect-button');
+connectButton.addEventListener('click', connectButtonClick);
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
