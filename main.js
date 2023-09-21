@@ -1,4 +1,4 @@
-import {startStream, loadERC20TokenBalance, isStreamStarted, stopStream} from "./modules/stream.mjs";
+import {startStream, loadBalance, isStreamStarted, stopStream} from "./modules/stream.mjs";
 
 if (!window.ethereum.isMetaMask) {
     document.getElementById('noMetamask').hidden = false;
@@ -86,10 +86,9 @@ function handleMessage(message) {
 function handleWalletSetup() {
     document.getElementById('log').innerHTML += "<br />Wallet connected: " + account + " Chain: " + chainId;
     document.getElementById('stream-start').disabled = false;
-    loadERC20TokenBalance(account).then((newBalance) => {
+    loadBalance(account).then((newBalance) => {
         balance = newBalance;
-        console.log("Balance " + balance);
-        document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
+        updateBalance();
         isStreamStarted(account).then((result) => {
             var flowRate = parseInt(result.flowrate,16);
             if (flowRate > 0) {
@@ -148,22 +147,24 @@ export function switchStream() {
     }
 }
 
+function updateBalance() {
+    console.log("Balance " + balance);
+    document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
+}
+
 function startSimulation() {
     intervalId = setInterval(function() {
         if (balance <= 0) {
             clearInterval(intervalId);
             console.log("Balance depleted!");
         } else {
-            console.log(`Balance: ${balance}`);
             var balanceWei = BigInt(balance);
             const decreaseAmount = BigInt('10000');
             balanceWei -= decreaseAmount;
             balance = balanceWei.toString();
-            document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
+            updateBalance();
         }
     }, 1000);
 }
-
-
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
