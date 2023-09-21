@@ -1,5 +1,4 @@
-import { startStream,loadERC20TokenBalance } from "./modules/stream.mjs";
-
+import {startStream, loadERC20TokenBalance, isStreamStarted, stopStream} from "./modules/stream.mjs";
 
 if (!window.ethereum.isMetaMask) {
     document.getElementById('noMetamask').hidden = false;
@@ -11,8 +10,6 @@ if (!window.ethereum.isConnected()) {
     console.log("Reloading");
     location.reload();
 }
-
-
 
 const BASE_GOERLI = '0x14a33';
 const opt = {
@@ -26,7 +23,9 @@ setTimeout(() => {
 
 var chainId = '';
 var account = '';
+var intervalId = '';
 var streamState = 'stopped';
+var balance = 0;
 
 window.ethereum.on('chainChanged', handleChainChanged)
 window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -44,10 +43,6 @@ function handleChainChanged(newChainId) {
         chainId = newChainId;
         handleWalletSetup();
     }
-}
-
-function connect() {
-
 }
 
 function disableStream() {
@@ -94,6 +89,17 @@ function handleWalletSetup() {
     loadERC20TokenBalance(account).then((balance) => {
         console.log("Balance " + balance);
         document.getElementById('tokenBalance').textContent = balance;
+        isStreamStarted(account).then((result) => {
+            var flowRate = parseInt(result.flowrate,16);
+            if (flowRate > 0) {
+                var button = document.getElementById('stream-start');
+                var log = document.getElementById('log')
+                log.innerHTML += "<br />Stream already started.";
+                button.textContent = "Stop stream";
+                streamState = 'started';
+                startSimulation();
+            }
+        })
     })
 }
 
@@ -113,22 +119,47 @@ export function switchStream() {
     button.disabled = true;
     if (streamState === 'stopped') {
         log.innerHTML += "<br />Starting stream...";
-        startStream();
-        setTimeout(function streamStarted() {
+        startStream(account).then((tx) => {
+            console.log(tx);
             log.innerHTML += "<br />Stream started.";
             button.textContent = "Stop stream";
-            button.disabled = false;
             streamState = 'started';
-        }, 3000);
+            startSimulation();
+        }).catch((result) => {
+            console.error("ERROR + " + JSON.stringify(result));
+        }).finally(() => {
+            button.disabled = false;
+        })
     } else if (streamState === 'started') {
         log.innerHTML += "<br />Stopping stream...";
-        setTimeout(function streamStarted() {
+        stopStream(account).then((tx) => {
+            console.log(tx);
             log.innerHTML += "<br />Stream stopped.";
             button.textContent = "Start stream";
-            button.disabled = false;
             streamState = 'stopped';
-        }, 3000);
+            clearInterval(intervalId);
+            // TODO refresh balance to get accurate picture
+        }).catch((result) => {
+            console.error("ERROR + " + JSON.stringify(result));
+        }).finally(() => {
+            button.disabled = false;
+        });
     }
 }
 
-document.getElementById('stream-start').addEventListener('click', startStream);
+function startSimulation() {
+    intervalId = setInterval(function() {
+        if (balance <= 0) {
+            clearInterval(intervalId);
+            console.log("Balance depleted!");
+        } else {
+            console.log(`Balance: ${balance}`);
+
+            document.getElementById('tokenBalance').textContent -= ethers.utils.formatEther(weiValue);
+        }
+    }, 1000);
+}
+
+
+
+document.getElementById('stream-start').addEventListener('click', switchStream);
