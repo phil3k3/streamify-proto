@@ -1,18 +1,4 @@
-var erc20 = [
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "name",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
+export var erc20 = [
     {
         "constant": false,
         "inputs": [

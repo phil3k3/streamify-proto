@@ -1,159 +1,18 @@
 <html lang="en">
-    <head title="Start stream">
+    <head>
         <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-        <script src="./erc20.js"></script>
-
-        <script>
-            console.log(window.ethereum);
-            const web3 = new Web3(window.ethereum);
-
-            const BASE_GOERLI = '0x14a33';
-            const opt = {
-                forceInjectProvider: typeof window.ethereum === 'undefined',
-                enableDebug: true
-            }
-            const MMSDK = new MetaMaskSDK.MetaMaskSDK(opt);
-
-            var chainId = '';
-            var account = '';
-            var streamState = 'stopped';
-
-            window.ethereum.on('chainChanged', handleChainChanged)
-            window.ethereum.on('accountsChanged', handleAccountsChanged);
-            window.ethereum.on('connect', handleConnected);
-            window.ethereum.on('disconnect', handleDisconnect);
-            window.ethereum.on('message', handleMessage);
-
-            function handleChainChanged(newChainId) {
-                console.log("Chain changed to " + newChainId);
-                if (newChainId !== BASE_GOERLI) {
-                    log.innerHTML += "<br /><div style='color: red'>Chain " + chainId + " not supported</div>";
-                    disableStream();
-                }
-                else {
-                    chainId = newChainId;
-                    loadERC20TokenBalance();
-                }
-            }
-
-            function disableStream() {
-                document.getElementById('stream-start').disabled = true;
-                document.getElementById('tokenBalance').textContent = '0';
-            }
-
-            function handleAccountsChanged(newAccount) {
-                console.log("Account changed to " + newAccount);
-                account = newAccount;
-                loadERC20TokenBalance();
-            }
-
-            function handleConnected(connectInfo) {
-                console.log("Connected to chain " + connectInfo.chainId);
-                const ethereum = MMSDK.getProvider();
-                if (connectInfo.chainId !== BASE_GOERLI) {
-                    ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{chainId: BASE_GOERLI}]
-                    }).then(() => {
-                        chainId = connectInfo.chainId;
-                        setupWallet();
-                    })
-                } else {
-                    chainId = connectInfo.chainId;
-                    setupWallet();
-                }
-            }
-
-            function handleDisconnect(connectInfo) {
-                console.log("Disconnected " + connectInfo);
-                disableStream();
-            }
-
-            function handleMessage(message) {
-                console.log("Message: " + message);
-            }
-
-            function loadERC20TokenBalance() {
-                document.getElementById('log').innerHTML += "<br />Wallet connected: " + account + " Chain: " + chainId;
-                document.getElementById('stream-start').disabled = false;
-                const superToken = '0xd5fd867e6dd8f9345cd0c99ce6a500034671c625';
-                const abiJson = erc20;
-                console.log('ABI data has fetched:', abiJson);
-                console.log('Loading balance for token ' + superToken);
-                const contract = new web3.eth.Contract(abiJson, superToken);
-                console.log(contract.methods);
-                contract.methods.balanceOf(account).call().then(response => {
-                   console.log("Balance " + response);
-                   document.getElementById('tokenBalance').textContent = response;
-                });
-            }
-
-            function fetchAbi(tokenAddress, storageKey) {
-                const apiKey = '9GZF9A1B1D3YBEAF2WP3Q5ZVBM6KVP1WAT';
-                const storedAbiData = localStorage.getItem(storageKey);
-                if (storedAbiData) {
-                    console.log("ABI is in storage");
-                    loadERC20TokenBalance(superToken, storedAbiData, account);
-                }
-                else {
-                    const apiUrl = `https://api-goerli.basescan.org/api?module=contract&action=getabi&address=${tokenAddress}&apikey=${apiKey}`;
-                    console.log(apiUrl);
-                    fetch(apiUrl)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP Error! Status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.status === "1" && data.message === "OK") {
-                                localStorage.setItem(storageKey, data.result);
-                                loadERC20TokenBalance(superToken, data.result, account);
-                            } else {
-                                console.error('API response does not contain ABI data.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('An error occurred while fetching or storing ABI data:', error);
-                        });
-                }
-            }
-
-            function setupWallet() {
-                ethereum.request({method: 'eth_requestAccounts'}).then((accounts) => {
-                    console.log(accounts);
-                    account = accounts[0];
-                    loadERC20TokenBalance();
-                })
-            }
-
-            function switchStream() {
-                console.log("Switching on/off stream...");
-                var button = document.getElementById('stream-start');
-                var log = document.getElementById('log');
-                button.disabled = true;
-                if (streamState === 'stopped') {
-                    log.innerHTML += "<br />Starting stream...";
-                    setTimeout(function streamStarted() {
-                        log.innerHTML += "<br />Stream started.";
-                        button.textContent = "Stop stream";
-                        button.disabled = false;
-                        streamState = 'started';
-                    }, 3000);
-                } else if (streamState === 'started') {
-                    log.innerHTML += "<br />Stopping stream...";
-                    setTimeout(function streamStarted() {
-                        log.innerHTML += "<br />Stream stopped.";
-                        button.textContent = "Start stream";
-                        button.disabled = false;
-                        streamState = 'stopped';
-                    }, 3000);
-                }
-            }
-        </script>
+<!--        <script>var exports = {};</script>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/@superfluid-finance/sdk-core@0.6.9/dist/main/Framework.min.js"></script>-->
+        <script type="module" src="main.js"></script>
+        <title>Start stream</title>
     </head>
-    <button id="stream-start" disabled onclick="switchStream()">Start stream</button>
-    <div id="balance">Token Balance: <div id="tokenBalance">0</div></div>
-    <div id="log"></div>
+    <div id="wrapper">
+        <button id="stream-start" disabled>Start stream</button>
+        <div id="balance">Token Balance: <div id="tokenBalance">0</div></div>
+        <div id="log"></div>
+    </div>
+    <div id="noMetamask" hidden>
+        <div>Please install Metamask</div>
+    </div>
 </html>
