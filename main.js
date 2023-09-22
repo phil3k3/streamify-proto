@@ -87,6 +87,7 @@ function handleWalletSetup() {
     loadBalance(account).then((newBalance) => {
         balance = newBalance;
         updateBalance();
+        updateConnectionStatus();
         isStreamStarted(account).then((result) => {
             var flowRate = parseInt(result.flowrate,16);
             if (flowRate > 0) {
