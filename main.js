@@ -80,8 +80,7 @@ function handleMessage(message) {
     console.log("Message: " + message);
 }
 
-
-function    handleWalletSetup() {
+function  handleWalletSetup() {
     console.log("Wallet connected: " + account + " Chain: " + chainId);
     document.getElementById('stream-start').disabled = false;
     loadBalance(account).then((newBalance) => {
@@ -157,6 +156,10 @@ function formatUnits(
 function updateBalance() {
     console.log("Balance " + balance);
     document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
+    if (balance.lt(1000)) {
+        document.getElementById('stream-start').disabled = true;
+        window.location('./insufficient-funds.html');
+    }
 }
 
 function startSimulation() {
