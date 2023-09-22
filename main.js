@@ -28,7 +28,7 @@ export function connect(){
 }
 
 export function isConnected() {
-    return window.ethereum.isConnected()
+    return window.ethereum.isConnected() && account && balance;
 }
 
 function handleChainChanged(newChainId) {
