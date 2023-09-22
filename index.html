@@ -5,6 +5,7 @@
     <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-big-decimal@2.0.4/dist/node/js-big-decimal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script type="module" src="main.js"></script>
 
     <style>
@@ -91,10 +92,35 @@
             font-size: 3em;
             margin-top: 5px;
         }
+
+        .warning-box {
+            border: 0.0625em solid red; /* Adjusted to em */
+            padding: 0.625em 0.9375em; /* Adjusted to em */
+            color: red;
+            font-size: 2em;
+            display: inline-flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .warning-sign {
+            font-size: 3em; /* Made it bigger */
+            color: red; /* Made the sign red */
+            margin-right: 0.625em; /* Adjusted to em */
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 25em; /* Adjusted to em */
+            padding: 1.25em; /* Adjusted to em */
+            box-sizing: border-box;
+        }
     </style>
 
 </head>
 <body>
+
 <div id="status">
     <div class="status-box connected" id="connected-box"></div><div id="connection-text">Connected</div>
     <div class="status-box not-connected" id="not-connected-box"></div><button id="connect-button">Connect</button>
@@ -107,7 +133,12 @@
     </div>
 </div>
 <button id="stream-start">Start Payment Stream</button>
-
+<div class="container" hidden>
+    <div class="warning-box">
+        <i class="warning-sign fas fa-exclamation-triangle"></i>
+        Insufficient funds
+    </div>
+</div>
 
 </body>
 </html>
