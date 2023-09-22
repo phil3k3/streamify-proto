@@ -81,7 +81,7 @@ function handleMessage(message) {
 }
 
 
-function handleWalletSetup() {
+function    handleWalletSetup() {
     console.log("Wallet connected: " + account + " Chain: " + chainId);
     document.getElementById('stream-start').disabled = false;
     loadBalance(account).then((newBalance) => {
