@@ -1,15 +1,5 @@
 import {startStream, loadBalance, isStreamStarted, stopStream} from "./modules/stream.mjs";
 
-if (!window.ethereum.isMetaMask) {
-    document.getElementById('noMetamask').hidden = false;
-    document.getElementById('wrapper').hidden = true;
-    console.log("Metamask not available");
-}
-
-if (!window.ethereum.isConnected()) {
-
-}
-
 const BASE_GOERLI = '0x14a33';
 const opt = {
     forceInjectProvider: typeof window.ethereum === 'undefined',
@@ -39,10 +29,6 @@ export function connect(){
 
 export function isConnected() {
     return window.ethereum.isConnected()
-}
-
-export function isSupported() {
-    return window.ethereum.isMetaMask;
 }
 
 function handleChainChanged(newChainId) {
@@ -157,9 +143,19 @@ export function switchStream() {
     }
 }
 
+function formatUnits(
+    value,
+    decimals,
+    maxDecimalDigits
+) {
+    return ethers.FixedNumber.from(ethers.utils.formatUnits(value, decimals))
+        .round(6)
+        .toString();
+}
+
 function updateBalance() {
     console.log("Balance " + balance);
-    document.getElementById('tokenBalance').textContent = ethers.utils.formatEther(balance);
+    document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
 }
 
 function startSimulation() {
