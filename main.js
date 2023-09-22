@@ -158,7 +158,7 @@ function updateBalance() {
     document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
     if (balance.lt(1000)) {
         document.getElementById('stream-start').disabled = true;
-        document.getElementById('warning-box').hidden = false;
+        document.getElementById('warning-box-container').hidden = false;
     }
 }
 
