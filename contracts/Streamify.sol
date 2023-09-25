@@ -5,7 +5,4 @@ contract FundMe {
     constructor() {
 
     }
-
-    function
-
 }

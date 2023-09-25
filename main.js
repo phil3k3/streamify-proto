@@ -1,4 +1,4 @@
-import {startStream, loadBalance, isStreamStarted, stopStream} from "./modules/stream.mjs";
+import {startStream, loadBalance, isStreamStarted, stopStream, fund} from "./modules/stream.mjs";
 
 const BASE_GOERLI = '0x14a33';
 const opt = {
@@ -204,7 +204,7 @@ const connectButton = document.getElementById('connect-button');
 connectButton.addEventListener('click', connect);
 
 function fundme() {
-    console.log("Fund me");
+    fund(account);
 }
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
