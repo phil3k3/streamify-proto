@@ -64,11 +64,13 @@
             border-radius: 10px; /* Rounded corners */
         }
         .token-box {
-            display: flex;
             align-items: center;
             padding: 20px;
             border: 2px solid #007BFF; /* Blue border */
             border-radius: 10px; /* Rounded corners */
+        }
+        .token {
+            display: flex;
         }
 
         .token-icon {
@@ -85,7 +87,7 @@
         }
 
         .token-name {
-            font-size: 3em;
+            font-size: 4em;
         }
 
         .token-balance {
@@ -97,10 +99,9 @@
             border: 0.0625em solid red; /* Adjusted to em */
             padding: 0.625em 0.9375em; /* Adjusted to em */
             color: red;
-            font-size: 2em;
-            display: inline-flex;
+            font-size: 3em;
             align-items: center;
-            width: 100%;
+            display: flex;
         }
 
         .warning-sign {
@@ -126,19 +127,19 @@
     <div class="status-box not-connected" id="not-connected-box"></div><button id="connect-button">Connect</button>
 </div>
 <div class="token-box">
-    <div class="token-icon"></div>
-    <div class="token-info">
-        <div class="token-name">Super fDAI</div>
-        <div class="token-balance"><div id="tokenBalance">0</div> fDAIx</div> <!-- Example balance -->
+    <div class="token">
+        <div class="token-icon"></div>
+        <div class="token-info">
+            <div class="token-name">Super fDAI</div>
+            <div class="token-balance"><span id="tokenBalance">0</span> fDAIx</div> <!-- Example balance -->
+        </div>
+    </div>
+    <div class="warning-box" id="warning-box" hidden>
+        <i class="warning-sign fas fa-exclamation-triangle"></i>
+        Insufficient funds <button class="fund-me" id="fundme">Fund Me</button>
     </div>
 </div>
 <button id="stream-start">Start Payment Stream</button>
-<div class="container" id='warning-box-container' hidden>
-    <div class="warning-box">
-        <i class="warning-sign fas fa-exclamation-triangle"></i>
-        Insufficient funds
-    </div>
-</div>
 
 </body>
 </html>

@@ -1,9 +1,12 @@
 import { cfa } from "./cfa.mjs";
 import { erc20 } from "./erc20.mjs";
+// import { superTokenAbi } from './superToken.mjs';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const contract = new ethers.Contract('0xcfa132e353cb4e398080b9700609bb008eceb125', cfa, provider);
 const superToken = '0x4ec89df8b16474a9333bb94a5f21197ef89a8d87';
+// const superTokenContract = new ethers.Contract(superToken, superTokenAbi, provider);
+
 const receiver = '0x6D7e59211Fa846c020c0B44397587133FE95831d';
 const flowRate = 2777777800000000;
 
@@ -38,3 +41,14 @@ export async function stopStream(address) {
             new TextEncoder().encode('')
     );
 }
+
+// export async function fund(address){
+//     const contractWithSigner = contract.connect(provider.getSigner());
+//     const contract = new ethers.Contract(superToken, erc20, provider);
+//     return contract.mint(address, 100000000000000000000);
+// }
+//
+// export async function upgrade(address){
+//     const contractWithSigner = superTokenContract.connect(provider.getSigner());
+//     return superTokenContract.upgrade()
+// }

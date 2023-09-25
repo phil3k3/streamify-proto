@@ -158,7 +158,7 @@ function updateBalance() {
     document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
     if (balance.lt(1000)) {
         document.getElementById('stream-start').disabled = true;
-        document.getElementById('warning-box-container').hidden = false;
+        document.getElementById('warning-box').hidden = false;
     }
 }
 
@@ -196,16 +196,16 @@ function updateConnectionStatus() {
     }
 }
 
-// Function to handle the "Connect" button click event
-function connectButtonClick() {
-    connect();
-}
-
 // Initial setup
 updateConnectionStatus();
 
 // Attach a click event listener to the "Connect" button
 const connectButton = document.getElementById('connect-button');
-connectButton.addEventListener('click', connectButtonClick);
+connectButton.addEventListener('click', connect);
+
+function fundme() {
+    console.log("Fund me");
+}
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
+document.getElementById('fundme').addEventListener('click', fundme)
