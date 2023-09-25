@@ -1,4 +1,4 @@
-import {startStream, loadBalance, isStreamStarted, stopStream, fund} from "./modules/stream.mjs";
+import {startStream, loadBalance, isStreamStarted, stopStream, fund, loadBalanceFDAIX} from "./modules/stream.mjs";
 
 const BASE_GOERLI = '0x14a33';
 const opt = {
@@ -157,8 +157,18 @@ function updateBalance() {
     console.log("Balance " + balance);
     document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
     if (balance.lt(1000)) {
-        document.getElementById('stream-start').disabled = true;
-        document.getElementById('warning-box').hidden = false;
+        loadBalanceFDAIX(account).then((result) => {
+            console.log("Received fDAIX balance of " + result);
+            document.getElementById('stream-start').disabled = true;
+            if (result.lt(1000)) {
+                console.log("ABC");
+                // not even fDAIx, enable FundMe
+                document.getElementById('warning-box').hidden = false;
+            } else {
+                // enough fDAIx, enable upgrade
+                document.getElementById('upgrade-box').hidden = false;
+            }
+        })
     }
 }
 

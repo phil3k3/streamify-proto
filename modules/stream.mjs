@@ -28,6 +28,13 @@ export async function loadBalance(account)  {
     return contract.balanceOf(account);
 }
 
+export async function loadBalanceFDAIX(account)  {
+    console.log('Loading balance for token ' + fDAIx);
+    const contract = new ethers.Contract(fDAIx, erc20, provider);
+    console.log(contract);
+    return contract.balanceOf(account);
+}
+
 export async function isStreamStarted(address){
     return contract.getFlowInfo(superToken, address, receiver);
 }
@@ -45,6 +52,6 @@ export async function stopStream(address) {
 export async function fund(address){
     const contract = new ethers.Contract(fDAIx, erc20, provider);
     const contractWithSigner = contract.connect(provider.getSigner());
-    return contractWithSigner.mint(address, 100000000000000000000);
+    return contractWithSigner.mint(address, '100000000000000000000');
 }
 
