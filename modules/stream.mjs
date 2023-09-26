@@ -7,7 +7,7 @@ const provider = new ethers.providers.Web3Provider(window.ethereum)
 const cfaContract = new ethers.Contract('0xcfa132e353cb4e398080b9700609bb008eceb125', cfa, provider);
 const superTokenAddress = '0x4ec89df8b16474a9333bb94a5f21197ef89a8d87';
 const superToken = new ethers.Contract(superTokenAddress, erc20, provider);
-const fundMeContract = new ethers.Contract("0x362B2C899c7cda14D79deC00BDe7E8cF0d550699", fundMe, provider);
+const fundMeContract = new ethers.Contract("0x592eecB1A0Ce66F77c059f9C55B8C133253cd9Ce", fundMe, provider);
 
 const receiver = '0x6D7e59211Fa846c020c0B44397587133FE95831d';
 const flowRate = 2777777800000000;

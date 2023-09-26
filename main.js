@@ -212,7 +212,11 @@ const connectButton = document.getElementById('connect-button');
 connectButton.addEventListener('click', connect);
 
 function fundme() {
-    fund(account);
+    fund(account).then((tx) => {
+        console.log("Account funded " + tx);
+    }).catch((error) => {
+        console.log(JSON.stringify(error));
+    })
 }
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
