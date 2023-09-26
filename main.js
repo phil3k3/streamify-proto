@@ -1,4 +1,4 @@
-import {startStream, loadBalance, isStreamStarted, stopStream, fund, loadBalanceFDAIX} from "./modules/stream.mjs";
+import {startStream, loadBalance, isStreamStarted, stopStream, fund} from "./modules/stream.mjs";
 
 const BASE_GOERLI = '0x14a33';
 const opt = {
@@ -6,11 +6,11 @@ const opt = {
     enableDebug: true
 }
 const MMSDK = new MetaMaskSDK.MetaMaskSDK(opt);
+var chainId = window.ethereum.networkVersion;
 setTimeout(() => {
     setupWallet();
 }, 0)
 
-var chainId = window.ethereum.networkVersion;
 var account = '';
 var intervalId = '';
 var streamState = 'stopped';
@@ -54,17 +54,21 @@ function handleAccountsChanged(newAccount) {
     handleWalletSetup();
 }
 
+function handleChain() {
+    const ethereum = MMSDK.getProvider();
+    ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{chainId: BASE_GOERLI}]
+    }).then(() => {
+        chainId = BASE_GOERLI;
+        setupWallet();
+    })
+}
+
 function handleConnected(connectInfo) {
     console.log("Connected to chain " + connectInfo.chainId);
-    const ethereum = MMSDK.getProvider();
     if (connectInfo.chainId !== BASE_GOERLI) {
-        ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{chainId: BASE_GOERLI}]
-        }).then(() => {
-            chainId = connectInfo.chainId;
-            setupWallet();
-        })
+        handleChain();
     } else {
         chainId = connectInfo.chainId;
         setupWallet();
@@ -102,11 +106,15 @@ function  handleWalletSetup() {
 
 function setupWallet() {
     const ethereum = MMSDK.getProvider()
-    ethereum.request({method: 'eth_requestAccounts'}).then((accounts) => {
-        console.log(accounts);
-        account = accounts[0];
-        handleWalletSetup();
-    })
+    if (chainId !== BASE_GOERLI) {
+        handleChain();
+    } else {
+        ethereum.request({method: 'eth_requestAccounts'}).then((accounts) => {
+            console.log(accounts);
+            account = accounts[0];
+            handleWalletSetup();
+        })
+    }
 }
 
 export function switchStream() {
@@ -145,8 +153,7 @@ export function switchStream() {
 
 function formatUnits(
     value,
-    decimals,
-    maxDecimalDigits
+    decimals
 ) {
     return ethers.FixedNumber.from(ethers.utils.formatUnits(value, decimals))
         .round(6)
@@ -155,20 +162,11 @@ function formatUnits(
 
 function updateBalance() {
     console.log("Balance " + balance);
-    document.getElementById('tokenBalance').textContent = formatUnits(balance, 18, 5);
+    document.getElementById('tokenBalance').textContent = formatUnits(balance, 18);
     if (balance.lt(1000)) {
-        loadBalanceFDAIX(account).then((result) => {
-            console.log("Received fDAIX balance of " + result);
-            document.getElementById('stream-start').disabled = true;
-            if (result.lt(1000)) {
-                console.log("ABC");
-                // not even fDAIx, enable FundMe
-                document.getElementById('warning-box').hidden = false;
-            } else {
-                // enough fDAIx, enable upgrade
-                document.getElementById('upgrade-box').hidden = false;
-            }
-        })
+        console.log("Received balance of " + balance);
+        document.getElementById('stream-start').disabled = true;
+        document.getElementById('warning-box').hidden = false;
     }
 }
 

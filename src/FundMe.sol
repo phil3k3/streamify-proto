@@ -4,7 +4,7 @@ import {
 ISuperfluid,
 ISuperToken
 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
-import TestToken from './TestToken.sol';
+import './TestToken.sol';
 
 contract FundMe {
 
@@ -16,8 +16,9 @@ contract FundMe {
         erc20Token = _erc20Token;
     }
 
-    function mintAndUpgrade(address target, uint256 allowance) {
+    function mintAndUpgrade(address target) public {
         erc20Token.mint(target, 100000000000000000000);
-        superToken.upgradeTo(target, 100000000000000000000);
+        bytes memory data = new bytes(0);
+        superToken.upgradeTo(target, 100000000000000000000, data);
     }
 }
