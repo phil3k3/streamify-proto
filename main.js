@@ -88,8 +88,12 @@ function  handleWalletSetup() {
     console.log("Wallet connected: " + account + " Chain: " + chainId);
     document.getElementById('stream-start').disabled = false;
     loadBalance(account).then((newBalance) => {
-        balance = newBalance;
-        updateBalance();
+        updateBalance(newBalance);
+        if (newBalance.lt(1000)) {
+            console.log("Received balance of " + newBalance);
+            document.getElementById('stream-start').disabled = true;
+            document.getElementById('warning-box').hidden = false;
+        }
         updateConnectionStatus();
         isStreamStarted(account).then((result) => {
             var flowRate = parseInt(result.flowrate,16);
@@ -160,14 +164,9 @@ function formatUnits(
         .toString();
 }
 
-function updateBalance() {
-    console.log("Balance " + balance);
+function updateBalance(newBalance) {
+    balance = newBalance;
     document.getElementById('tokenBalance').textContent = formatUnits(balance, 18);
-    if (balance.lt(1000)) {
-        console.log("Received balance of " + balance);
-        document.getElementById('stream-start').disabled = true;
-        document.getElementById('warning-box').hidden = false;
-    }
 }
 
 function startSimulation() {
@@ -175,12 +174,12 @@ function startSimulation() {
         if (balance <= 0) {
             clearInterval(intervalId);
             console.log("Balance depleted!");
+            updateBalance(balance);
         } else {
             var balanceWei = BigInt(balance);
             const decreaseAmount = BigInt('10000');
             balanceWei -= decreaseAmount;
-            balance = balanceWei.toString();
-            updateBalance();
+            updateBalance(balanceWei.toString());
         }
     }, 1000);
 }
@@ -211,7 +210,7 @@ updateConnectionStatus();
 const connectButton = document.getElementById('connect-button');
 connectButton.addEventListener('click', connect);
 
-function fundme() {
+function fundMe() {
     fund(account).then((tx) => {
         console.log("Account funded " + tx);
     }).catch((error) => {
@@ -220,4 +219,4 @@ function fundme() {
 }
 
 document.getElementById('stream-start').addEventListener('click', switchStream);
-document.getElementById('fundme').addEventListener('click', fundme)
+document.getElementById('fund-me').addEventListener('click', fundMe)
