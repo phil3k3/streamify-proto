@@ -34,7 +34,7 @@ export function isConnected() {
 function handleChainChanged(newChainId) {
     console.log("Chain changed to " + newChainId);
     if (newChainId !== BASE_GOERLI) {
-        log.innerHTML += "<br /><div style='color: red'>Chain " + chainId + " not supported</div>";
+        console.log("Chain " + chainId + " not supported");
         disableStream();
     }
     else {
