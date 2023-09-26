@@ -36,7 +36,7 @@ export async function isStreamStarted(address){
 export async function stopStream(address) {
     const contractWithSigner = cfaContract.connect(provider.getSigner());
     return contractWithSigner.deleteFlow(
-            superToken,
+            superTokenAddress,
             address,
             receiver,
             new TextEncoder().encode('')
